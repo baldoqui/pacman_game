@@ -3,9 +3,8 @@ use bevy::prelude::*;
 mod plugins;
 
 use plugins::{
-    animation::plugin::AnimationPlugin, entities::plugin::EntitiesPlugin,
+    animation::plugin::AnimationPlugin, entities::plugin::EntitiesPlugin, grid::plugin::GridPlugin,
     setup::plugin::SetupPlugin, ui::plugin::UiPlugin,
-    grid::plugin::GridPlugin
 };
 
 fn main() {
