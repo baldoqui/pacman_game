@@ -2,7 +2,7 @@ use std::time::Duration;
 
 use bevy::prelude::*;
 
-#[derive(Component)]
+#[derive(Component, Clone)]
 pub struct AnimationConfig {
     pub first_sprite_index: usize,
     pub last_sprite_index: usize,
@@ -24,9 +24,3 @@ impl AnimationConfig {
         Timer::new(Duration::from_secs_f32(1.0 / (fps as f32)), TimerMode::Once)
     }
 }
-
-#[derive(Component)]
-pub struct LeftSprite;
-
-#[derive(Component)]
-pub struct RightSprite;
