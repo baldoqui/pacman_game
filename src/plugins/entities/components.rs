@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::animation::components::AnimationConfig;
+use crate::plugins::animation::components::AnimationConfig;
 
 #[derive(Component)]
 pub struct GameEntity {

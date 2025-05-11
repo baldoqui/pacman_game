@@ -1,7 +1,7 @@
 use super::components::*;
 use bevy::prelude::*;
 
-use crate::animation::components::AnimationConfig;
+use crate::plugins::animation::components::AnimationConfig;
 
 pub fn spawn_game_entity(
     commands: &mut Commands,

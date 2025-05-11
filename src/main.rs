@@ -1,14 +1,11 @@
 use bevy::prelude::*;
 
-mod animation;
-mod entities;
-mod setup;
-mod ui;
+mod plugins;
 
-use animation::plugin::AnimationPlugin;
-use entities::plugin::EntitiesPlugin;
-use setup::plugin::SetupPlugin;
-use ui::plugin::UiPlugin;
+use plugins::{
+    animation::plugin::AnimationPlugin, entities::plugin::EntitiesPlugin,
+    setup::plugin::SetupPlugin, ui::plugin::UiPlugin,
+};
 
 fn main() {
     App::new()
