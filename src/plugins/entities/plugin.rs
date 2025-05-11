@@ -1,5 +1,5 @@
-use super::systems::*;
 use super::components::*;
+use super::systems::*;
 use bevy::prelude::*;
 
 pub struct EntitiesPlugin;
