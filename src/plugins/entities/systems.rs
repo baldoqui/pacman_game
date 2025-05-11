@@ -2,6 +2,7 @@ use super::components::*;
 use bevy::prelude::*;
 
 use crate::plugins::animation::components::AnimationConfig;
+use crate::plugins::grid::components::GridCell;
 
 pub fn spawn_game_entity(
     commands: &mut Commands,
@@ -69,13 +70,42 @@ pub fn setup_entities(
     );
 }
 
-pub fn execute_entities(time: Res<Time>, mut query: Query<(&mut GameEntity, &mut Transform)>) {
-    for (mut game_entity, mut transform) in &mut query {
+pub fn execute_entities(
+    time: Res<Time>,
+    mut queryPlayer: Query<(&mut GameEntity, &mut Transform)>,
+    mut new_direction: ResMut<PlayerInputDirection>,
+) {
+    for (mut game_entity, mut transform) in &mut queryPlayer {
         let dir = game_entity.direction;
         let velocity = game_entity.velocity;
 
         game_entity.position.x += dir.x * velocity * time.delta_secs();
         game_entity.position.y += dir.y * velocity * time.delta_secs();
+
+        let cell_size = 32.0;
+
+        let cell_position = (game_entity.position / cell_size).round() * cell_size;
+
+        if dir.x != 0.0 {
+            game_entity.position.y = cell_position.y;
+        } else {
+            game_entity.position.x = (game_entity.position.x / cell_size).round() * cell_size;
+        }
+
+        let tolerance = 1.0;
+        let cell_x = (game_entity.position.x / cell_size).round() * cell_size;
+        let cell_y = (game_entity.position.y / cell_size).round() * cell_size;
+
+        let is_aligned_x = (game_entity.position.x - cell_x).abs() < tolerance;
+        let is_aligned_y = (game_entity.position.y - cell_y).abs() < tolerance;
+
+        if new_direction.0.x != 0.0 && is_aligned_y {
+            game_entity.direction = Vec2::new(new_direction.0.x, 0.0);
+            game_entity.position.y = cell_y;
+        } else if new_direction.0.y != 0.0 && is_aligned_x {
+            game_entity.direction = Vec2::new(0.0, new_direction.0.y);
+            game_entity.position.x = cell_x;
+        }
 
         transform.translation = game_entity.position;
     }
@@ -83,24 +113,15 @@ pub fn execute_entities(time: Res<Time>, mut query: Query<(&mut GameEntity, &mut
 
 pub fn player_movement(
     keyboard_input: Res<ButtonInput<KeyCode>>,
-    mut query: Query<&mut GameEntity, With<PlayerControlled>>,
+    mut new_direction: ResMut<PlayerInputDirection>,
 ) {
-    for mut game_entity in query.iter_mut() {
-        if keyboard_input.pressed(KeyCode::ArrowUp) {
-            game_entity.direction.y = 1.0;
-            game_entity.direction.x = 0.0;
-        }
-        if keyboard_input.pressed(KeyCode::ArrowDown) {
-            game_entity.direction.y = -1.0;
-            game_entity.direction.x = 0.0;
-        }
-        if keyboard_input.pressed(KeyCode::ArrowLeft) {
-            game_entity.direction.y = 0.0;
-            game_entity.direction.x = -1.0;
-        }
-        if keyboard_input.pressed(KeyCode::ArrowRight) {
-            game_entity.direction.y = 0.0;
-            game_entity.direction.x = 1.0;
-        }
+    if keyboard_input.pressed(KeyCode::ArrowUp) {
+        new_direction.0 = Vec2::new(0.0, 1.0);
+    } else if keyboard_input.pressed(KeyCode::ArrowDown) {
+        new_direction.0 = Vec2::new(0.0, -1.0);
+    } else if keyboard_input.pressed(KeyCode::ArrowLeft) {
+        new_direction.0 = Vec2::new(-1.0, 0.0);
+    } else if keyboard_input.pressed(KeyCode::ArrowRight) {
+        new_direction.0 = Vec2::new(1.0, 0.0);
     }
 }

@@ -29,11 +29,8 @@ impl GameEntity {
     }
 }
 
-#[derive(Component)]
-pub struct PacmanSprite;
-
-#[derive(Component)]
-pub struct GhostSprite;
+#[derive(Resource, Default)]
+pub struct PlayerInputDirection(pub Vec2);
 
 #[derive(Component)]
 pub struct PlayerControlled;
